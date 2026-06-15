@@ -1,0 +1,39 @@
+name: CI (Continuous Integration)
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  # Id job (Ga boleh ada spasi)
+  build-testing:
+    name: Build and Testing
+    runs-on: ubuntu-latest
+    # Definisikan step nya apa aja
+    steps:
+      # Yang pertama dilakukan checkout repository (saat runs on ubuntu itu 
+      # masih kosongan. Nah saat checkout repository artinya download repository 
+      # trus dimasukkan ke dalam mesin ini (runnernya)) sehingga ada file kita di runnernya
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Karena aplikasi running di docker, perlu instal docker compose dulu
+      - name: Install Docker Compose 
+        run: |
+          sudo apt-get update 
+          sudo apt-get install -y docker-compose
+        # run pertama untuk update repository
+        # lalu instal docker compose kasih -y agar automatic yes saat instal dcker compose
+ 
+      # saat docker compose sudah diinstal, kita build dan Running container nya      
+      - name: Build and Run Container
+        run: |
+          sudo docker compose up -d
+      # Disini aplikasi udh jalan di mesin ubuntu runner
+
+      # Untuk antisipasi aplikasi belum jalan tapi udh di ekspekusi perintah testing, kita kasih jeda 10 detik
+      # Kemudian kita melkaukan testing
+      - name: Testing
+        run: |
+          sleep 20
+          python3 testing/test.py          

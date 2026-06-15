@@ -1,0 +1,51 @@
+# Di CD kita akan push docker image yang lolos testing ke docker hub
+name: CD (Continuous Delivery)
+# Akan delivery image di branch main
+
+# Trigerrnya ketika ada update (push) atau merge  di branch utama (branch main)
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+# karena berbeda workflow harus di build ulang trus di push
+  # Ulang siapin runner lagi 
+  build-push:
+    name: Build and Push Image To DockerHub
+    runs-on: ubuntu-latest
+  # Step nya
+    steps:
+     # Lalkukan checkout repository ( copy file repo ke runner/ mesin)
+      - name: Checkout repository
+        uses: actions/checkout@v2
+     # Login ke dalam docker hub dengan perintah runner ubuntu
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+            username: ${{ secrets.DOCKERHUB_USERNAME }}
+            password: ${{ secrets.DOCKERHUB_TOKEN }}
+      
+      # Set up builder 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      
+      # Kita lakukan build dan push ke docker hub image nya (ga dijalanin di container
+      # Kita build flaskapp nya dululu)
+      # Push nya tru agar setelah dibuild lansung di push harus dikasih tags dulu 
+      # tags diawali dengan username, tags nya dari run number (awalnya 1) jadi tags nyaakan berubah 
+      - name: Build and push flaskapp
+        uses: docker/build-push-action@v4
+        with:
+            context: ./app
+            file: ./app/Dockerfile
+            push: true
+            tags: ${{ secrets.DOCKERHUB_USERNAME }}/flaskapp:${{ github.run_number }}
+      # selanjutnya untuk postgres , file nya dalam postgress
+      - name: Build and push postgres
+        uses: docker/build-push-action@v4
+        with:
+            context: ./postgres
+            file: ./postgres/Dockerfile
+            push: true
+            tags: ${{ secrets.DOCKERHUB_USERNAME }}/postgres:${{ github.run_number }}
+            
