@@ -4,27 +4,26 @@ import psycopg2
 from dotenv import load_dotenv
 load_dotenv()
 
-db_name = os.environ.get('POSTGRES_DB')
-usr = os.environ.get('POSTGRES_USER')
-usr_pwd = os.environ.get('POSTGRES_PASSWORD')
-hst = os.environ.get('POSTGRES_HOST')
-prt = os.environ.get('POSTGRES_PORT')
-
-
 app = Flask(__name__)
-# Konfigurasi database
-db_conn = psycopg2.connect(
-    database = db_name,
-    user = usr,
-    password = usr_pwd,
-    host = hst,
-    port = prt
-)
-
 
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
+        db_name = os.environ.get('POSTGRES_DB')
+        usr = os.environ.get('POSTGRES_USER')
+        usr_pwd = os.environ.get('POSTGRES_PASSWORD')
+        hst = os.environ.get('POSTGRES_HOST')
+        prt = os.environ.get('POSTGRES_PORT')
+
+        # Konfigurasi database
+        db_conn = psycopg2.connect(
+            database = db_name,
+            user = usr,
+            password = usr_pwd,
+            host = hst,
+            port = prt
+        )
+
         nama = request.form["nama"]
         nim = request.form["nim"]
         mata_kuliah = request.form["mata_kuliah"]
