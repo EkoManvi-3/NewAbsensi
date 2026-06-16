@@ -30,6 +30,9 @@ jobs:
         run: |
           sudo docker compose up -d
       # Disini aplikasi udh jalan di mesin ubuntu runner
+      - name: Lihat Log Flask (Debugging)
+        run: |
+         sudo docker compose logs app
 
       # Untuk antisipasi aplikasi belum jalan tapi udh di ekspekusi perintah testing, kita kasih jeda 10 detik
       # Kemudian kita melkaukan testing
