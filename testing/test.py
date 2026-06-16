@@ -17,6 +17,7 @@ def get_title_from_web(url):
 
 web_url = "http://localhost:5000"
 title = get_title_from_web(web_url)
-
+# Baris ini akan mencetak "Form Absensi Mahasiswa" atau pesan error koneksi
+print(f"DEBUG Title yang terbaca: '{title}'")
 assert title == "Form Absensi Mahasiswa"
 print("Testing success")
